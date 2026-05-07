@@ -3,7 +3,7 @@ name: Build docker image and push it to a registry
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:

@@ -1,0 +1,6 @@
+const MOBILE_REGEX = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i;
+
+export function isMobileUserAgent(userAgent: string | null | undefined): boolean {
+    if (!userAgent) return false;
+    return MOBILE_REGEX.test(userAgent);
+}

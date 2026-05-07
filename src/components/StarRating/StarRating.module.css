@@ -1,0 +1,23 @@
+.rating {
+    display: inline-flex;
+    gap: 2px;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.star {
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    color: #d1d5db;
+    font-size: inherit;
+}
+
+.star.filled {
+    color: #f59e0b;
+}
+
+.readonly .star {
+    cursor: default;
+}

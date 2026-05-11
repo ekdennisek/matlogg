@@ -10,6 +10,7 @@ import { Card, Stack } from "@/components/Layout";
 import { useSnackbar } from "@/components/Snackbar";
 import { Body, Caption, H3 } from "@/components/Typography";
 import {
+    deleteRecipe,
     publishDraft,
     PublishState,
     removeRecipeIngredient,
@@ -44,7 +45,9 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
     const snackbar = useSnackbar();
     const [name, setName] = useState(initialName);
     const [pendingTransition, startTransition] = useTransition();
+    const [pendingDelete, startDeleteTransition] = useTransition();
     const [saveOpen, setSaveOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
 
     const [publishState, publishAction, publishing] = useActionState(publishDraft, publishInitial);
 
@@ -72,6 +75,12 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
     function remove(recipeIngredientId: string) {
         startTransition(async () => {
             await removeRecipeIngredient(recipeIngredientId);
+        });
+    }
+
+    function handleDelete() {
+        startDeleteTransition(async () => {
+            await deleteRecipe(recipeId);
         });
     }
 
@@ -137,7 +146,34 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
                 >
                     {t("saveRecipe")}
                 </Button>
+                <Button
+                    fullWidth
+                    variant="danger"
+                    onClick={() => setDeleteOpen(true)}
+                    disabled={pendingTransition || pendingDelete}
+                >
+                    {t("deleteButton")}
+                </Button>
             </div>
+
+            <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} title={t("deleteDialogTitle")}>
+                <Stack gap={3}>
+                    <Body>{t("deleteDialogBody")}</Body>
+                    <Stack gap={2}>
+                        <Button variant="danger" fullWidth onClick={handleDelete} disabled={pendingDelete}>
+                            {pendingDelete ? tCommon("deleting") : t("deleteConfirm")}
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            fullWidth
+                            onClick={() => setDeleteOpen(false)}
+                            disabled={pendingDelete}
+                        >
+                            {tCommon("cancel")}
+                        </Button>
+                    </Stack>
+                </Stack>
+            </Dialog>
 
             <Dialog open={saveOpen} onClose={() => setSaveOpen(false)} title={t("dialogTitle")}>
                 <form action={publishAction}>

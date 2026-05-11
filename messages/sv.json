@@ -115,7 +115,11 @@
             "saveRecipe": "Spara recept",
             "dialogTitle": "Spara recept",
             "nameLabel": "Receptnamn",
-            "publicCheckbox": "Gör offentligt — vem som helst kan hitta och recensera receptet"
+            "publicCheckbox": "Gör offentligt — vem som helst kan hitta och recensera receptet",
+            "deleteButton": "Radera utkast",
+            "deleteDialogTitle": "Radera utkast?",
+            "deleteDialogBody": "Det här tar bort utkastet och dess ingredienser permanent.",
+            "deleteConfirm": "Radera utkast"
         },
         "owner": {
             "deleteButton": "Ta bort",

@@ -115,7 +115,11 @@
             "saveRecipe": "Save recipe",
             "dialogTitle": "Save recipe",
             "nameLabel": "Recipe name",
-            "publicCheckbox": "Make public — anyone can find and review this recipe"
+            "publicCheckbox": "Make public — anyone can find and review this recipe",
+            "deleteButton": "Delete draft",
+            "deleteDialogTitle": "Delete draft?",
+            "deleteDialogBody": "This permanently removes the draft and its ingredients.",
+            "deleteConfirm": "Delete draft"
         },
         "owner": {
             "deleteButton": "Delete",

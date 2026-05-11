@@ -6,6 +6,7 @@ import { z } from "zod";
 import { one, oneOrNone, tx } from "@/lib/db/queries";
 import { IngredientRow } from "@/lib/db/schemas";
 import { getCurrentUser } from "@/lib/auth/session";
+import { parseLocaleNumber } from "@/lib/format";
 import { buildCreatedDiff, recordIngredientEvent } from "@/server/ingredientEvents";
 
 export type IngredientLookup =
@@ -24,11 +25,7 @@ export async function lookupByBarcode(barcode: string): Promise<IngredientLookup
 
 const optionalNumber = z
     .union([z.string(), z.number(), z.null(), z.undefined()])
-    .transform((v) => {
-        if (v === null || v === undefined || v === "") return null;
-        const n = typeof v === "number" ? v : Number(v);
-        return Number.isFinite(n) ? n : NaN;
-    })
+    .transform(parseLocaleNumber)
     .refine((v) => v === null || (Number.isFinite(v) && v >= 0), "Must be a non-negative number");
 
 const CreateIngredientSchema = z.object({

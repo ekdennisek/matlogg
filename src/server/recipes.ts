@@ -7,6 +7,7 @@ import { z } from "zod";
 import { many, none, one, oneOrNone, tx } from "@/lib/db/queries";
 import { RecipeRow } from "@/lib/db/schemas";
 import { getCurrentUser, requireUser } from "@/lib/auth/session";
+import { parseLocaleNumber } from "@/lib/format";
 
 function defaultDraftName(): string {
     const d = new Date();
@@ -57,7 +58,7 @@ const SetGramsSchema = z.object({
     recipeIngredientId: z.string().uuid(),
     amountGrams: z
         .union([z.string(), z.number()])
-        .transform((v) => (v === "" || v === null || v === undefined ? null : Number(v)))
+        .transform(parseLocaleNumber)
         .refine((v) => v === null || (Number.isFinite(v) && v >= 0), "Must be non-negative"),
 });
 

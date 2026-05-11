@@ -40,9 +40,7 @@ export function NewIngredientForm({ barcode, returnUrl }: Props) {
                                 key={field.key}
                                 label={`${field.label}${field.suffix}`}
                                 name={field.key}
-                                type="number"
-                                min={0}
-                                step="any"
+                                type="text"
                                 inputMode="decimal"
                                 error={state.fieldErrors?.[field.key]?.[0]}
                             />

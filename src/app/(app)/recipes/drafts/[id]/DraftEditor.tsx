@@ -97,9 +97,7 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
                             <input
                                 aria-label={`Grams for ${ing.name}`}
                                 className={styles.gramsInput}
-                                type="number"
-                                min={0}
-                                step="any"
+                                type="text"
                                 inputMode="decimal"
                                 placeholder="g"
                                 defaultValue={ing.amountGrams ?? ""}

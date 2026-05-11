@@ -67,8 +67,10 @@ export async function listActiveSessions(userId: string) {
 }
 
 export type RotationResult =
-    | { ok: true; userId: string; newRawToken: string }
+    | { ok: true; userId: string; newRawToken: string | null }
     | { ok: false; reason: "missing" | "expired" | "reused" | "unknown" };
+
+const REFRESH_RACE_GRACE_SECONDS = 30;
 
 export async function rotateRefreshToken(
     rawToken: string,
@@ -77,12 +79,37 @@ export async function rotateRefreshToken(
     const tokenHash = hashRefreshToken(rawToken);
     return await tx(async () => {
         const existing = await oneOrNone(
-            sql`SELECT * FROM refresh_tokens WHERE "tokenHash" = ${tokenHash}`,
+            sql`SELECT * FROM refresh_tokens WHERE "tokenHash" = ${tokenHash} FOR UPDATE`,
             RefreshTokenRow,
         );
         if (!existing) return { ok: false, reason: "missing" } as const;
 
         if (existing.revokedAt !== null) {
+            const revokedMsAgo = Date.now() - existing.revokedAt.getTime();
+            if (
+                revokedMsAgo <= REFRESH_RACE_GRACE_SECONDS * 1000 &&
+                existing.replacedByTokenId !== null
+            ) {
+                const replacement = await oneOrNone(
+                    sql`
+                        SELECT * FROM refresh_tokens
+                        WHERE "refreshTokenId" = ${existing.replacedByTokenId}
+                    `,
+                    RefreshTokenRow,
+                );
+                if (
+                    replacement &&
+                    replacement.revokedAt === null &&
+                    replacement.expiresAt.getTime() > Date.now()
+                ) {
+                    return {
+                        ok: true,
+                        userId: existing.userId,
+                        newRawToken: null,
+                    } as const;
+                }
+            }
+
             await none(sql`
                 UPDATE refresh_tokens
                 SET "revokedAt" = now()

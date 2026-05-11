@@ -31,6 +31,8 @@ export async function POST() {
     const accessToken = await signAccessToken(result.userId);
     const res = NextResponse.json({ ok: true });
     res.cookies.set(ACCESS_COOKIE, accessToken, accessCookieOptions);
-    res.cookies.set(REFRESH_COOKIE, result.newRawToken, refreshCookieOptions);
+    if (result.newRawToken !== null) {
+        res.cookies.set(REFRESH_COOKIE, result.newRawToken, refreshCookieOptions);
+    }
     return res;
 }

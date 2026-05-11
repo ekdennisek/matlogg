@@ -20,7 +20,8 @@ async function tryRefresh(req: NextRequest): Promise<Response | null> {
     const refreshCookie = req.cookies.get(REFRESH_COOKIE)?.value;
     if (!refreshCookie) return null;
 
-    const url = new URL("/api/auth/refresh", req.url);
+    const base = process.env.INTERNAL_URL ?? req.url;
+    const url = new URL("/api/auth/refresh", base);
     try {
         const res = await fetch(url, {
             method: "POST",
@@ -31,7 +32,8 @@ async function tryRefresh(req: NextRequest): Promise<Response | null> {
             redirect: "manual",
         });
         return res;
-    } catch {
+    } catch (err) {
+        console.error("middleware refresh loopback failed", err);
         return null;
     }
 }

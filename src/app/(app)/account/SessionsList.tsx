@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/Button";
 import { Card, Row, Stack } from "@/components/Layout";
 import { Body, Caption } from "@/components/Typography";
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export function SessionsList({ sessions }: Props) {
+    const t = useTranslations("account");
     const [pending, startTransition] = useTransition();
     return (
         <Stack gap={2}>
@@ -25,10 +27,10 @@ export function SessionsList({ sessions }: Props) {
                 <Card key={s.refreshTokenId}>
                     <Row justify="space-between" align="flex-start" gap={3}>
                         <Stack gap={1}>
-                            <Body>{s.userAgent ?? "Unknown device"}</Body>
+                            <Body>{s.userAgent ?? t("unknownDevice")}</Body>
                             <Caption>
-                                Created {s.createdAt}
-                                {s.lastUsedAt ? ` · last used ${s.lastUsedAt}` : ""}
+                                {t("createdLine", { created: s.createdAt })}
+                                {s.lastUsedAt ? t("lastUsedLine", { lastUsed: s.lastUsedAt }) : ""}
                             </Caption>
                         </Stack>
                         <Button
@@ -40,7 +42,7 @@ export function SessionsList({ sessions }: Props) {
                                 })
                             }
                         >
-                            Sign out
+                            {t("signOut")}
                         </Button>
                     </Row>
                 </Card>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import styles from "./StarRating.module.css";
 
 type Props = {
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export function StarRating({ value, onChange, name, size }: Props) {
+    const t = useTranslations("starRating");
     const [hover, setHover] = useState<number | null>(null);
     const readonly = !onChange;
     const display = hover ?? value;
@@ -26,7 +28,7 @@ export function StarRating({ value, onChange, name, size }: Props) {
                 <button
                     key={n}
                     type="button"
-                    aria-label={`${n} star${n > 1 ? "s" : ""}`}
+                    aria-label={t("ariaLabel", { n })}
                     onMouseEnter={() => !readonly && setHover(n)}
                     onClick={() => onChange?.(n)}
                     disabled={readonly}

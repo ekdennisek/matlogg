@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
 import sql from "sql-template-tag";
 import { z } from "zod";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Card, Page, PageHeader, Row, Stack } from "@/components/Layout";
 import { StarRating } from "@/components/StarRating";
 import { Body, Caption, H3 } from "@/components/Typography";
 import { many, oneOrNone } from "@/lib/db/queries";
 import { RecipeRow } from "@/lib/db/schemas";
 import { getCurrentUser } from "@/lib/auth/session";
-import { formatDate, formatNumber, NUTRIENT_FIELDS } from "@/lib/format";
+import { formatDate, formatNumber, NUTRIENT_FIELDS, type NutrientKey } from "@/lib/format";
 import { getReviewsForRecipe, getReviewSummary } from "@/server/reviews";
 import { ReviewForm } from "./ReviewForm";
 import { AddToCollectionButton } from "./AddToCollectionButton";
@@ -56,6 +57,10 @@ function totalsFor(ingredients: RecipeIngredientView[]) {
 
 export default async function RecipePage({ params }: Props) {
     const { id } = await params;
+    const t = await getTranslations("recipes.detail");
+    const tCommon = await getTranslations("common");
+    const tNutrients = await getTranslations("nutrients");
+    const locale = await getLocale();
     const me = await getCurrentUser();
 
     const recipe = await oneOrNone(
@@ -97,16 +102,21 @@ export default async function RecipePage({ params }: Props) {
         <Page>
             <PageHeader title={recipe.name} />
             <Caption>
-                by {recipe.authorName} · {recipe.isPublic ? "Public" : "Private"} · Updated{" "}
-                {formatDate(recipe.updatedAt)}
+                {t("authorLine", {
+                    author: recipe.authorName,
+                    visibility: recipe.isPublic ? tCommon("publicLabel") : tCommon("privateLabel"),
+                    date: formatDate(recipe.updatedAt, locale),
+                })}
             </Caption>
 
             {recipe.isPublic && summary.reviewCount > 0 && (
                 <Row gap={2}>
                     <StarRating value={Math.round(summary.avgRating ?? 0)} />
                     <Caption>
-                        {(summary.avgRating ?? 0).toFixed(1)} · {summary.reviewCount} review
-                        {summary.reviewCount === 1 ? "" : "s"}
+                        {t("reviewsSummary", {
+                            rating: (summary.avgRating ?? 0).toFixed(1),
+                            count: summary.reviewCount,
+                        })}
                     </Caption>
                 </Row>
             )}
@@ -115,9 +125,9 @@ export default async function RecipePage({ params }: Props) {
             {isOwner && <OwnerActions recipeId={recipe.recipeId} />}
 
             <Card>
-                <H3>Ingredients</H3>
+                <H3>{t("ingredientsHeading")}</H3>
                 {ingredients.length === 0 ? (
-                    <Body muted>No ingredients</Body>
+                    <Body muted>{t("noIngredients")}</Body>
                 ) : (
                     <Stack gap={2}>
                         {ingredients.map((ing) => (
@@ -134,12 +144,12 @@ export default async function RecipePage({ params }: Props) {
 
             {anyKnown && (
                 <Card>
-                    <H3>Total nutrients</H3>
-                    <Caption>Computed from ingredients with a gram amount.</Caption>
+                    <H3>{t("totalNutrientsHeading")}</H3>
+                    <Caption>{t("totalNutrientsCaption")}</Caption>
                     <Stack gap={2}>
                         {NUTRIENT_FIELDS.map((f) => (
                             <Row key={f.key} justify="space-between">
-                                <Body muted>{f.label}</Body>
+                                <Body muted>{tNutrients(f.key as NutrientKey)}</Body>
                                 <Body>{formatNumber(totals[f.key], f.suffix)}</Body>
                             </Row>
                         ))}
@@ -158,7 +168,7 @@ export default async function RecipePage({ params }: Props) {
 
             {recipe.isPublic && reviews.length > 0 && (
                 <Stack gap={2}>
-                    <H3>Reviews</H3>
+                    <H3>{t("reviewsHeading")}</H3>
                     {reviews.map((rv) => (
                         <Card key={rv.reviewId}>
                             <Row justify="space-between">
@@ -166,7 +176,7 @@ export default async function RecipePage({ params }: Props) {
                                 <StarRating value={rv.rating} />
                             </Row>
                             {rv.comment && <Body>{rv.comment}</Body>}
-                            <Caption>{formatDate(rv.updatedAt)}</Caption>
+                            <Caption>{formatDate(rv.updatedAt, locale)}</Caption>
                         </Card>
                     ))}
                 </Stack>

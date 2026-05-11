@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/Button";
 import { Textarea } from "@/components/Input";
 import { Card, Stack } from "@/components/Layout";
@@ -18,12 +19,14 @@ type Props = {
 };
 
 export function ReviewForm({ recipeId, initialRating, initialComment, isEdit }: Props) {
+    const t = useTranslations("recipes.review");
+    const tCommon = useTranslations("common");
     const [state, formAction, pending] = useActionState(upsertReview, initial);
     const [rating, setRating] = useState(initialRating);
 
     return (
         <Card>
-            <H3>{isEdit ? "Your review" : "Leave a review"}</H3>
+            <H3>{isEdit ? t("yourReview") : t("leaveReview")}</H3>
             <form action={formAction}>
                 <input type="hidden" name="recipeId" value={recipeId} />
                 <Stack gap={3}>
@@ -33,13 +36,17 @@ export function ReviewForm({ recipeId, initialRating, initialComment, isEdit }: 
                     )}
                     <Textarea
                         name="comment"
-                        placeholder="Optional comment"
+                        placeholder={t("commentPlaceholder")}
                         defaultValue={initialComment}
                         error={state.fieldErrors?.comment?.[0]}
                     />
                     {state.formError && <Caption error>{state.formError}</Caption>}
                     <Button type="submit" disabled={pending || rating === 0} fullWidth>
-                        {pending ? "Saving…" : isEdit ? "Update review" : "Submit review"}
+                        {pending
+                            ? tCommon("saving")
+                            : isEdit
+                              ? t("updateReview")
+                              : t("submitReview")}
                     </Button>
                 </Stack>
             </form>

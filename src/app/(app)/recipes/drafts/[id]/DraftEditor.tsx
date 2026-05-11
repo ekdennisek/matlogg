@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/Button";
 import { Checkbox, Input } from "@/components/Input";
 import { Dialog } from "@/components/Dialog";
@@ -36,6 +37,9 @@ type Props = {
 const publishInitial: PublishState = { ok: false };
 
 export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
+    const t = useTranslations("recipes.draft");
+    const tCommon = useTranslations("common");
+    const tErrors = useTranslations("errors.recipes");
     const router = useRouter();
     const snackbar = useSnackbar();
     const [name, setName] = useState(initialName);
@@ -51,7 +55,7 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
         fd.set("name", name.trim());
         startTransition(async () => {
             const result = await renameRecipe({ ok: false }, fd);
-            if (!result.ok) snackbar.show(result.formError ?? "Could not rename");
+            if (!result.ok) snackbar.show(result.formError ?? tErrors("couldNotRename"));
         });
     }
 
@@ -61,7 +65,7 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
         fd.set("amountGrams", value);
         startTransition(async () => {
             const result = await setIngredientGrams({ ok: false }, fd);
-            if (!result.ok) snackbar.show(result.formError ?? "Could not save amount");
+            if (!result.ok) snackbar.show(result.formError ?? tErrors("couldNotSaveAmount"));
         });
     }
 
@@ -74,7 +78,7 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
     return (
         <div className={styles.editor}>
             <input
-                aria-label="Draft name"
+                aria-label={t("nameAriaLabel")}
                 className={styles.nameInput}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -83,11 +87,11 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
 
             {ingredients.length === 0 ? (
                 <Card>
-                    <Body muted>No ingredients yet. Tap "Scan to add" below.</Body>
+                    <Body muted>{t("emptyIngredients")}</Body>
                 </Card>
             ) : (
                 <Stack gap={2}>
-                    <H3>Ingredients</H3>
+                    <H3>{t("ingredientsHeading")}</H3>
                     {ingredients.map((ing) => (
                         <div key={ing.recipeIngredientId} className={styles.row}>
                             <div className={styles.rowMain}>
@@ -95,7 +99,7 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
                                 <div className={styles.rowMeta}>{ing.barcode}</div>
                             </div>
                             <input
-                                aria-label={`Grams for ${ing.name}`}
+                                aria-label={t("gramsAriaLabel", { ingredient: ing.name })}
                                 className={styles.gramsInput}
                                 type="text"
                                 inputMode="decimal"
@@ -105,7 +109,7 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
                             />
                             <button
                                 type="button"
-                                aria-label={`Remove ${ing.name}`}
+                                aria-label={t("removeAriaLabel", { ingredient: ing.name })}
                                 className={styles.removeButton}
                                 onClick={() => remove(ing.recipeIngredientId)}
                             >
@@ -123,7 +127,7 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
                         router.push(`/scan?into=${encodeURIComponent(`draft:${recipeId}`)}`)
                     }
                 >
-                    Scan to add
+                    {t("scanToAdd")}
                 </Button>
                 <Button
                     fullWidth
@@ -131,29 +135,29 @@ export function DraftEditor({ recipeId, initialName, ingredients }: Props) {
                     onClick={() => setSaveOpen(true)}
                     disabled={ingredients.length === 0 || pendingTransition}
                 >
-                    Save recipe
+                    {t("saveRecipe")}
                 </Button>
             </div>
 
-            <Dialog open={saveOpen} onClose={() => setSaveOpen(false)} title="Save recipe">
+            <Dialog open={saveOpen} onClose={() => setSaveOpen(false)} title={t("dialogTitle")}>
                 <form action={publishAction}>
                     <input type="hidden" name="recipeId" value={recipeId} />
                     <Stack gap={4}>
                         <Input
-                            label="Recipe name"
+                            label={t("nameLabel")}
                             name="name"
                             defaultValue={name}
                             required
                             error={publishState.fieldErrors?.name?.[0]}
                         />
-                        <Checkbox name="isPublic" value="on" label="Make public — anyone can find and review this recipe" />
+                        <Checkbox name="isPublic" value="on" label={t("publicCheckbox")} />
                         {publishState.formError && <Caption error>{publishState.formError}</Caption>}
                         <Stack gap={2}>
                             <Button type="submit" fullWidth disabled={publishing}>
-                                {publishing ? "Saving…" : "Save"}
+                                {publishing ? tCommon("saving") : tCommon("save")}
                             </Button>
                             <Button type="button" variant="secondary" fullWidth onClick={() => setSaveOpen(false)}>
-                                Cancel
+                                {tCommon("cancel")}
                             </Button>
                         </Stack>
                     </Stack>

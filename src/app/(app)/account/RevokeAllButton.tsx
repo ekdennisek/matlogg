@@ -1,10 +1,12 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/Button";
 import { revokeAllSessions } from "@/server/sessions";
 
 export function RevokeAllButton() {
+    const t = useTranslations("account");
     const [pending, startTransition] = useTransition();
     return (
         <Button
@@ -12,7 +14,7 @@ export function RevokeAllButton() {
             disabled={pending}
             onClick={() => startTransition(() => revokeAllSessions())}
         >
-            Sign out everywhere
+            {t("signOutEverywhere")}
         </Button>
     );
 }

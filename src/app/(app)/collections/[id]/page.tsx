@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import sql from "sql-template-tag";
 import { z } from "zod";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Card, CardLink, Page, PageHeader, Row, Stack } from "@/components/Layout";
 import { Body, Caption, H3 } from "@/components/Typography";
 import { many, oneOrNone } from "@/lib/db/queries";
@@ -25,6 +26,9 @@ const CollectionRecipe = z.object({
 export default async function CollectionPage({ params }: Props) {
     const user = await requireUser();
     const { id } = await params;
+    const t = await getTranslations("collections.detail");
+    const tBrowse = await getTranslations("recipes.browse");
+    const locale = await getLocale();
 
     const collection = await oneOrNone(
         sql`SELECT * FROM collections WHERE "collectionId" = ${id} AND "userId" = ${user.userId}`,
@@ -51,7 +55,7 @@ export default async function CollectionPage({ params }: Props) {
 
             {recipes.length === 0 ? (
                 <Card>
-                    <Body muted>This collection is empty. Add recipes from a recipe page.</Body>
+                    <Body muted>{t("empty")}</Body>
                 </Card>
             ) : (
                 <Stack gap={2}>
@@ -61,7 +65,10 @@ export default async function CollectionPage({ params }: Props) {
                                 <CardLink href={`/recipes/${r.recipeId}`}>
                                     <H3>{r.name}</H3>
                                     <Caption>
-                                        by {r.authorName} · {formatDate(r.updatedAt)}
+                                        {tBrowse("authorAndDate", {
+                                            author: r.authorName,
+                                            date: formatDate(r.updatedAt, locale),
+                                        })}
                                     </Caption>
                                 </CardLink>
                                 <RecipeRowControls

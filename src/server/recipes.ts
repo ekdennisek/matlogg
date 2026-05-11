@@ -4,14 +4,18 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import sql from "sql-template-tag";
 import { z } from "zod";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { many, none, one, oneOrNone, tx } from "@/lib/db/queries";
 import { RecipeRow } from "@/lib/db/schemas";
 import { getCurrentUser, requireUser } from "@/lib/auth/session";
 import { parseLocaleNumber } from "@/lib/format";
+import { buildZodErrorMap } from "@/i18n/zodErrors";
 
-function defaultDraftName(): string {
-    const d = new Date();
-    return `Draft – ${d.toLocaleDateString("en", { month: "short", day: "numeric" })}`;
+async function defaultDraftName(): Promise<string> {
+    const t = await getTranslations("draft");
+    const formatter = await getFormatter();
+    const date = formatter.dateTime(new Date(), { month: "short", day: "numeric" });
+    return t("defaultName", { date });
 }
 
 async function ensureOwnRecipe(recipeId: string, userId: string) {
@@ -25,10 +29,11 @@ async function ensureOwnRecipe(recipeId: string, userId: string) {
 
 export async function createDraft() {
     const user = await requireUser();
+    const name = await defaultDraftName();
     const inserted = await one(
         sql`
             INSERT INTO recipes ("userId", "name")
-            VALUES (${user.userId}, ${defaultDraftName()})
+            VALUES (${user.userId}, ${name})
             RETURNING *
         `,
         RecipeRow,
@@ -54,20 +59,28 @@ export async function addScannedIngredientToDraft(recipeId: string, ingredientId
     revalidatePath(`/recipes/drafts/${recipeId}`);
 }
 
-const SetGramsSchema = z.object({
-    recipeIngredientId: z.string().uuid(),
-    amountGrams: z
-        .union([z.string(), z.number()])
-        .transform(parseLocaleNumber)
-        .refine((v) => v === null || (Number.isFinite(v) && v >= 0), "Must be non-negative"),
-});
-
 export type FieldState = { ok: boolean; formError?: string };
 
 export async function setIngredientGrams(_: FieldState, fd: FormData): Promise<FieldState> {
     const user = await requireUser();
-    const parsed = SetGramsSchema.safeParse(Object.fromEntries(fd));
-    if (!parsed.success) return { ok: false, formError: "Invalid amount" };
+    const tValidation = await getTranslations("validation");
+    const tError = await getTranslations("errors.recipes");
+
+    const SetGramsSchema = z.object({
+        recipeIngredientId: z.string().uuid(),
+        amountGrams: z
+            .union([z.string(), z.number()])
+            .transform(parseLocaleNumber)
+            .refine(
+                (v) => v === null || (Number.isFinite(v) && v >= 0),
+                tValidation("mustBeNonNegative"),
+            ),
+    });
+
+    const parsed = SetGramsSchema.safeParse(Object.fromEntries(fd), {
+        errorMap: buildZodErrorMap(tValidation),
+    });
+    if (!parsed.success) return { ok: false, formError: tError("invalidAmount") };
 
     await tx(async () => {
         const row = await oneOrNone(
@@ -113,15 +126,20 @@ export async function removeRecipeIngredient(recipeIngredientId: string) {
     revalidatePath(`/recipes/drafts/${row.recipeId}`);
 }
 
-const RenameSchema = z.object({
-    recipeId: z.string().uuid(),
-    name: z.string().trim().min(1).max(140),
-});
-
 export async function renameRecipe(_: FieldState, fd: FormData): Promise<FieldState> {
     const user = await requireUser();
-    const parsed = RenameSchema.safeParse(Object.fromEntries(fd));
-    if (!parsed.success) return { ok: false, formError: "Name is required" };
+    const tValidation = await getTranslations("validation");
+    const tError = await getTranslations("errors.recipes");
+
+    const RenameSchema = z.object({
+        recipeId: z.string().uuid(),
+        name: z.string().trim().min(1).max(140),
+    });
+
+    const parsed = RenameSchema.safeParse(Object.fromEntries(fd), {
+        errorMap: buildZodErrorMap(tValidation),
+    });
+    if (!parsed.success) return { ok: false, formError: tError("nameRequired") };
     await ensureOwnRecipe(parsed.data.recipeId, user.userId);
     await none(sql`
         UPDATE recipes
@@ -133,12 +151,6 @@ export async function renameRecipe(_: FieldState, fd: FormData): Promise<FieldSt
     return { ok: true };
 }
 
-const PublishSchema = z.object({
-    recipeId: z.string().uuid(),
-    name: z.string().trim().min(1).max(140),
-    isPublic: z.union([z.literal("on"), z.literal("true"), z.literal("")]).optional(),
-});
-
 export type PublishState = {
     ok: boolean;
     formError?: string;
@@ -147,11 +159,23 @@ export type PublishState = {
 
 export async function publishDraft(_: PublishState, fd: FormData): Promise<PublishState> {
     const user = await requireUser();
-    const parsed = PublishSchema.safeParse({
-        recipeId: fd.get("recipeId"),
-        name: fd.get("name"),
-        isPublic: fd.get("isPublic") ?? "",
+    const tValidation = await getTranslations("validation");
+    const tError = await getTranslations("errors.recipes");
+
+    const PublishSchema = z.object({
+        recipeId: z.string().uuid(),
+        name: z.string().trim().min(1).max(140),
+        isPublic: z.union([z.literal("on"), z.literal("true"), z.literal("")]).optional(),
     });
+
+    const parsed = PublishSchema.safeParse(
+        {
+            recipeId: fd.get("recipeId"),
+            name: fd.get("name"),
+            isPublic: fd.get("isPublic") ?? "",
+        },
+        { errorMap: buildZodErrorMap(tValidation) },
+    );
     if (!parsed.success) {
         return { ok: false, fieldErrors: parsed.error.flatten().fieldErrors };
     }
@@ -163,7 +187,7 @@ export async function publishDraft(_: PublishState, fd: FormData): Promise<Publi
         z.object({ count: z.number().int() }),
     );
     if (!count || count.count === 0) {
-        return { ok: false, formError: "Add at least one ingredient before saving." };
+        return { ok: false, formError: tError("addOneIngredient") };
     }
     await none(sql`
         UPDATE recipes
@@ -241,3 +265,4 @@ export async function getMyRecipes() {
         saved: rows.filter((r) => !r.isDraft),
     };
 }
+

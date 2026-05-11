@@ -3,11 +3,13 @@
 import { redirect } from "next/navigation";
 import sql from "sql-template-tag";
 import { z } from "zod";
+import { getTranslations } from "next-intl/server";
 import { one, oneOrNone, tx } from "@/lib/db/queries";
 import { IngredientRow } from "@/lib/db/schemas";
 import { getCurrentUser } from "@/lib/auth/session";
 import { parseLocaleNumber } from "@/lib/format";
 import { buildCreatedDiff, recordIngredientEvent } from "@/server/ingredientEvents";
+import { buildZodErrorMap } from "@/i18n/zodErrors";
 
 export type IngredientLookup =
     | { found: true; ingredientId: string }
@@ -23,25 +25,6 @@ export async function lookupByBarcode(barcode: string): Promise<IngredientLookup
     return row ? { found: true, ingredientId: row.ingredientId } : { found: false };
 }
 
-const optionalNumber = z
-    .union([z.string(), z.number(), z.null(), z.undefined()])
-    .transform(parseLocaleNumber)
-    .refine((v) => v === null || (Number.isFinite(v) && v >= 0), "Must be a non-negative number");
-
-const CreateIngredientSchema = z.object({
-    barcode: z.string().trim().min(1, "Barcode is required"),
-    name: z.string().trim().min(1, "Name is required").max(200),
-    energyKcal: optionalNumber,
-    energyKj: optionalNumber,
-    fatG: optionalNumber,
-    saturatedFatG: optionalNumber,
-    carbsG: optionalNumber,
-    sugarsG: optionalNumber,
-    proteinG: optionalNumber,
-    saltG: optionalNumber,
-    fiberG: optionalNumber,
-});
-
 export type CreateIngredientState = {
     ok: boolean;
     formError?: string;
@@ -53,10 +36,37 @@ export async function createIngredient(
     fd: FormData,
 ): Promise<CreateIngredientState> {
     const user = await getCurrentUser();
-    if (!user) return { ok: false, formError: "You must be logged in to add ingredients." };
+    const tValidation = await getTranslations("validation");
+    const tError = await getTranslations("errors.ingredients");
+
+    if (!user) return { ok: false, formError: tError("loginRequired") };
+
+    const optionalNumber = z
+        .union([z.string(), z.number(), z.null(), z.undefined()])
+        .transform(parseLocaleNumber)
+        .refine(
+            (v) => v === null || (Number.isFinite(v) && v >= 0),
+            tValidation("mustBeNonNegative"),
+        );
+
+    const CreateIngredientSchema = z.object({
+        barcode: z.string().trim().min(1, tValidation("barcodeRequired")),
+        name: z.string().trim().min(1, tValidation("nameRequired")).max(200),
+        energyKcal: optionalNumber,
+        energyKj: optionalNumber,
+        fatG: optionalNumber,
+        saturatedFatG: optionalNumber,
+        carbsG: optionalNumber,
+        sugarsG: optionalNumber,
+        proteinG: optionalNumber,
+        saltG: optionalNumber,
+        fiberG: optionalNumber,
+    });
 
     const raw = Object.fromEntries(fd);
-    const parsed = CreateIngredientSchema.safeParse(raw);
+    const parsed = CreateIngredientSchema.safeParse(raw, {
+        errorMap: buildZodErrorMap(tValidation),
+    });
     if (!parsed.success) {
         return { ok: false, fieldErrors: parsed.error.flatten().fieldErrors };
     }
@@ -104,7 +114,7 @@ export async function createIngredient(
     });
 
     if (result.duplicate) {
-        return { ok: false, formError: "This barcode is already registered." };
+        return { ok: false, formError: tError("duplicateBarcode") };
     }
     const inserted = result.inserted;
 

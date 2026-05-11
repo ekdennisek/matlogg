@@ -4,8 +4,10 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import sql from "sql-template-tag";
 import { z } from "zod";
+import { getTranslations } from "next-intl/server";
 import { one, oneOrNone } from "@/lib/db/queries";
 import { UserRow } from "@/lib/db/schemas";
+import { buildZodErrorMap } from "@/i18n/zodErrors";
 import {
     accessCookieOptions,
     ACCESS_COOKIE,
@@ -23,17 +25,6 @@ export type FormState = {
     fieldErrors?: Record<string, string[]>;
 };
 
-const RegisterSchema = z.object({
-    email: z.string().email().max(254),
-    displayName: z.string().trim().min(1).max(60),
-    password: z.string().min(8).max(200),
-});
-
-const LoginSchema = z.object({
-    email: z.string().email().max(254),
-    password: z.string().min(1).max(200),
-});
-
 async function startSession(userId: string) {
     const headerList = await headers();
     const userAgent = headerList.get("user-agent");
@@ -45,11 +36,24 @@ async function startSession(userId: string) {
 }
 
 export async function registerAction(_: FormState, fd: FormData): Promise<FormState> {
-    const parsed = RegisterSchema.safeParse({
-        email: fd.get("email"),
-        displayName: fd.get("displayName"),
-        password: fd.get("password"),
+    const tValidation = await getTranslations("validation");
+    const tError = await getTranslations("errors.auth");
+    const errorMap = buildZodErrorMap(tValidation);
+
+    const RegisterSchema = z.object({
+        email: z.string().email().max(254),
+        displayName: z.string().trim().min(1).max(60),
+        password: z.string().min(8).max(200),
     });
+
+    const parsed = RegisterSchema.safeParse(
+        {
+            email: fd.get("email"),
+            displayName: fd.get("displayName"),
+            password: fd.get("password"),
+        },
+        { errorMap },
+    );
     if (!parsed.success) {
         return { ok: false, fieldErrors: parsed.error.flatten().fieldErrors };
     }
@@ -58,7 +62,7 @@ export async function registerAction(_: FormState, fd: FormData): Promise<FormSt
         sql`SELECT "userId" FROM users WHERE "email" = ${parsed.data.email}`,
         z.object({ userId: z.string().uuid() }),
     );
-    if (existing) return { ok: false, formError: "Email already registered" };
+    if (existing) return { ok: false, formError: tError("emailExists") };
 
     const passwordHash = await hashPassword(parsed.data.password);
     const inserted = await one(
@@ -74,10 +78,22 @@ export async function registerAction(_: FormState, fd: FormData): Promise<FormSt
 }
 
 export async function loginAction(_: FormState, fd: FormData): Promise<FormState> {
-    const parsed = LoginSchema.safeParse({
-        email: fd.get("email"),
-        password: fd.get("password"),
+    const tValidation = await getTranslations("validation");
+    const tError = await getTranslations("errors.auth");
+    const errorMap = buildZodErrorMap(tValidation);
+
+    const LoginSchema = z.object({
+        email: z.string().email().max(254),
+        password: z.string().min(1).max(200),
     });
+
+    const parsed = LoginSchema.safeParse(
+        {
+            email: fd.get("email"),
+            password: fd.get("password"),
+        },
+        { errorMap },
+    );
     if (!parsed.success) {
         return { ok: false, fieldErrors: parsed.error.flatten().fieldErrors };
     }
@@ -86,10 +102,10 @@ export async function loginAction(_: FormState, fd: FormData): Promise<FormState
         sql`SELECT * FROM users WHERE "email" = ${parsed.data.email}`,
         UserRow,
     );
-    if (!user) return { ok: false, formError: "Invalid email or password" };
+    if (!user) return { ok: false, formError: tError("invalidCredentials") };
 
     const valid = await verifyPassword(user.passwordHash, parsed.data.password);
-    if (!valid) return { ok: false, formError: "Invalid email or password" };
+    if (!valid) return { ok: false, formError: tError("invalidCredentials") };
 
     await startSession(user.userId);
     redirect("/");

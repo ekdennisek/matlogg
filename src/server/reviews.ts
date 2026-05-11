@@ -3,15 +3,11 @@
 import { revalidatePath } from "next/cache";
 import sql from "sql-template-tag";
 import { z } from "zod";
+import { getTranslations } from "next-intl/server";
 import { many, none, oneOrNone } from "@/lib/db/queries";
 import { ReviewRow } from "@/lib/db/schemas";
 import { requireUser } from "@/lib/auth/session";
-
-const UpsertSchema = z.object({
-    recipeId: z.string().uuid(),
-    rating: z.coerce.number().int().min(1).max(5),
-    comment: z.string().trim().max(2000).optional().transform((v) => (v ? v : null)),
-});
+import { buildZodErrorMap } from "@/i18n/zodErrors";
 
 export type ReviewState = {
     ok: boolean;
@@ -21,11 +17,23 @@ export type ReviewState = {
 
 export async function upsertReview(_: ReviewState, fd: FormData): Promise<ReviewState> {
     const user = await requireUser();
-    const parsed = UpsertSchema.safeParse({
-        recipeId: fd.get("recipeId"),
-        rating: fd.get("rating"),
-        comment: fd.get("comment"),
+    const tValidation = await getTranslations("validation");
+    const tError = await getTranslations("errors.reviews");
+
+    const UpsertSchema = z.object({
+        recipeId: z.string().uuid(),
+        rating: z.coerce.number().int().min(1).max(5),
+        comment: z.string().trim().max(2000).optional().transform((v) => (v ? v : null)),
     });
+
+    const parsed = UpsertSchema.safeParse(
+        {
+            recipeId: fd.get("recipeId"),
+            rating: fd.get("rating"),
+            comment: fd.get("comment"),
+        },
+        { errorMap: buildZodErrorMap(tValidation) },
+    );
     if (!parsed.success) return { ok: false, fieldErrors: parsed.error.flatten().fieldErrors };
 
     const recipe = await oneOrNone(
@@ -39,10 +47,10 @@ export async function upsertReview(_: ReviewState, fd: FormData): Promise<Review
         }),
     );
     if (!recipe || recipe.isDraft || !recipe.isPublic) {
-        return { ok: false, formError: "Recipe is not available for reviews." };
+        return { ok: false, formError: tError("notAvailable") };
     }
     if (recipe.userId === user.userId) {
-        return { ok: false, formError: "You can't review your own recipe." };
+        return { ok: false, formError: tError("ownRecipe") };
     }
 
     await none(sql`

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/Button";
 import { Dialog } from "@/components/Dialog";
 import { Row, Stack } from "@/components/Layout";
@@ -13,6 +14,8 @@ type Props = {
 };
 
 export function OwnerActions({ recipeId }: Props) {
+    const t = useTranslations("recipes.owner");
+    const tCommon = useTranslations("common");
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [pending, startTransition] = useTransition();
 
@@ -26,14 +29,14 @@ export function OwnerActions({ recipeId }: Props) {
         <Row gap={2}>
             <AddToCollectionButton recipeId={recipeId} />
             <Button variant="danger" onClick={() => setConfirmOpen(true)}>
-                Delete
+                {t("deleteButton")}
             </Button>
-            <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} title="Delete recipe?">
+            <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} title={t("deleteDialogTitle")}>
                 <Stack gap={3}>
-                    <Body>This permanently removes the recipe and any reviews.</Body>
+                    <Body>{t("deleteDialogBody")}</Body>
                     <Stack gap={2}>
                         <Button variant="danger" fullWidth onClick={handleDelete} disabled={pending}>
-                            {pending ? "Deleting…" : "Delete recipe"}
+                            {pending ? tCommon("deleting") : t("deleteConfirm")}
                         </Button>
                         <Button
                             variant="secondary"
@@ -41,7 +44,7 @@ export function OwnerActions({ recipeId }: Props) {
                             onClick={() => setConfirmOpen(false)}
                             disabled={pending}
                         >
-                            Cancel
+                            {tCommon("cancel")}
                         </Button>
                     </Stack>
                 </Stack>

@@ -1,0 +1,261 @@
+{
+    "common": {
+        "save": "Save",
+        "saving": "Saving…",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "deleting": "Deleting…",
+        "loading": "Loading…",
+        "publicLabel": "Public",
+        "privateLabel": "Private",
+        "updated": "Updated",
+        "by": "by"
+    },
+    "metadata": {
+        "title": "Matlogg",
+        "description": "Scan, build and share recipes from your phone"
+    },
+    "nav": {
+        "home": "Home",
+        "scan": "Scan",
+        "recipes": "Recipes",
+        "collections": "Collections",
+        "account": "Account"
+    },
+    "welcome": {
+        "title": "Matlogg",
+        "body": "This is a smartphone-only app for scanning food barcodes, building recipes and sharing them. Open it on your phone to get started."
+    },
+    "auth": {
+        "login": {
+            "title": "Welcome back",
+            "subtitle": "Log in to create recipes and reviews.",
+            "emailLabel": "Email",
+            "passwordLabel": "Password",
+            "submit": "Log in",
+            "submitting": "Logging in…",
+            "newHere": "New here?",
+            "createAccountLink": "Create an account"
+        },
+        "register": {
+            "title": "Create account",
+            "subtitle": "Set up your account to build and share recipes.",
+            "displayNameLabel": "Display name",
+            "emailLabel": "Email",
+            "passwordLabel": "Password",
+            "submit": "Create account",
+            "submitting": "Creating account…",
+            "haveAccount": "Already have an account?",
+            "loginLink": "Log in"
+        }
+    },
+    "home": {
+        "title": "Matlogg",
+        "scan": {
+            "title": "Scan a barcode",
+            "body": "Point your camera at a product to look up its nutrients.",
+            "cta": "Open scanner"
+        },
+        "myRecipes": {
+            "title": "My recipes & drafts",
+            "body": "Continue working on a draft or view your saved recipes."
+        },
+        "browse": {
+            "title": "Browse public recipes",
+            "body": "Find recipes shared by other users."
+        },
+        "collections": {
+            "title": "Collections",
+            "body": "Group recipes into your own lists."
+        },
+        "guest": {
+            "title": "Sign in to do more",
+            "body": "Create recipes, leave reviews, and save collections.",
+            "login": "Log in",
+            "register": "Create account"
+        }
+    },
+    "recipes": {
+        "list": {
+            "title": "My recipes",
+            "newRecipe": "New recipe",
+            "browseLink": "Browse public recipes",
+            "draftsHeading": "Drafts",
+            "lastEdited": "Last edited {date}",
+            "savedHeading": "Saved",
+            "emptySaved": "You haven't saved any recipes yet. Tap \"New recipe\" to start one.",
+            "savedMeta": "{visibility} · Updated {date}"
+        },
+        "browse": {
+            "title": "Browse public recipes",
+            "searchPlaceholder": "Search by name",
+            "sortRecent": "Most recent",
+            "sortRating": "Highest rated",
+            "search": "Search",
+            "noResults": "No recipes match your search yet.",
+            "authorAndDate": "by {author} · {date}"
+        },
+        "detail": {
+            "authorLine": "by {author} · {visibility} · Updated {date}",
+            "reviewsSummary": "{rating} · {count, plural, one {# review} other {# reviews}}",
+            "ingredientsHeading": "Ingredients",
+            "noIngredients": "No ingredients",
+            "totalNutrientsHeading": "Total nutrients",
+            "totalNutrientsCaption": "Computed from ingredients with a gram amount.",
+            "reviewsHeading": "Reviews"
+        },
+        "draft": {
+            "pageTitle": "Draft",
+            "nameAriaLabel": "Draft name",
+            "emptyIngredients": "No ingredients yet. Tap \"Scan to add\" below.",
+            "ingredientsHeading": "Ingredients",
+            "gramsAriaLabel": "Grams for {ingredient}",
+            "removeAriaLabel": "Remove {ingredient}",
+            "scanToAdd": "Scan to add",
+            "saveRecipe": "Save recipe",
+            "dialogTitle": "Save recipe",
+            "nameLabel": "Recipe name",
+            "publicCheckbox": "Make public — anyone can find and review this recipe"
+        },
+        "owner": {
+            "deleteButton": "Delete",
+            "deleteDialogTitle": "Delete recipe?",
+            "deleteDialogBody": "This permanently removes the recipe and any reviews.",
+            "deleteConfirm": "Delete recipe"
+        },
+        "review": {
+            "yourReview": "Your review",
+            "leaveReview": "Leave a review",
+            "commentPlaceholder": "Optional comment",
+            "updateReview": "Update review",
+            "submitReview": "Submit review"
+        },
+        "addToCollection": {
+            "button": "Add to collection",
+            "dialogTitle": "Add to collection",
+            "noCollections": "You don't have any collections yet.",
+            "createLabel": "Or create a new collection",
+            "createPlaceholder": "Collection name",
+            "createAndAdd": "Create and add",
+            "added": "Added to collection",
+            "addedToNew": "Added to new collection",
+            "createError": "Could not create collection"
+        }
+    },
+    "collections": {
+        "list": {
+            "title": "Collections",
+            "empty": "You haven't created any collections yet.",
+            "recipeCount": "{count, plural, one {# recipe} other {# recipes}}"
+        },
+        "new": {
+            "label": "New collection",
+            "placeholder": "e.g. Weeknight dinners",
+            "submit": "Add"
+        },
+        "detail": {
+            "empty": "This collection is empty. Add recipes from a recipe page.",
+            "removeAriaLabel": "Remove from collection"
+        },
+        "actions": {
+            "rename": "Rename",
+            "deleteButton": "Delete",
+            "renameDialogTitle": "Rename collection",
+            "nameLabel": "Name",
+            "deleteDialogTitle": "Delete collection?",
+            "deleteDialogBody": "The recipes inside won't be deleted, just the collection itself.",
+            "deleteConfirm": "Delete collection"
+        }
+    },
+    "ingredients": {
+        "new": {
+            "title": "Add ingredient",
+            "noBarcodeBody": "Ingredients are created from a scan. Open the scanner and scan a barcode that isn't yet in the database.",
+            "intro": "Fill in the product name and any nutrients you can find on the label. All nutrient fields are optional.",
+            "barcodeLabel": "Barcode",
+            "nameLabel": "Product name",
+            "namePlaceholder": "e.g. Whole milk",
+            "nutrientsHeading": "Nutrients per 100 g",
+            "nutrientsCaption": "All fields are optional — fill in only what you know.",
+            "submit": "Save ingredient",
+            "submitting": "Saving…",
+            "nutrientLabel": "{label}{suffix}"
+        },
+        "detail": {
+            "barcodeLine": "Barcode: {barcode}",
+            "per100g": "Per 100 g"
+        }
+    },
+    "scan": {
+        "hint": "Align the barcode inside the frame",
+        "cameraError": "Could not access the camera. Check browser permissions.",
+        "unknownBarcode": "This barcode isn't in the database yet.",
+        "addIt": "Add it"
+    },
+    "account": {
+        "title": "Account",
+        "activeSessions": "Active sessions",
+        "noOtherSessions": "No other active sessions.",
+        "unknownDevice": "Unknown device",
+        "createdLine": "Created {created}",
+        "lastUsedLine": " · last used {lastUsed}",
+        "signOut": "Sign out",
+        "signOutEverywhere": "Sign out everywhere",
+        "logOut": "Log out",
+        "languageLabel": "Language",
+        "languageSv": "Svenska",
+        "languageEn": "English"
+    },
+    "nutrients": {
+        "energyKcal": "Energy",
+        "energyKj": "Energy",
+        "fatG": "Fat",
+        "saturatedFatG": "of which saturated",
+        "carbsG": "Carbohydrates",
+        "sugarsG": "of which sugars",
+        "fiberG": "Fiber",
+        "proteinG": "Protein",
+        "saltG": "Salt"
+    },
+    "starRating": {
+        "ariaLabel": "{n, plural, one {# star} other {# stars}}"
+    },
+    "draft": {
+        "defaultName": "Draft – {date}"
+    },
+    "errors": {
+        "auth": {
+            "emailExists": "Email already registered",
+            "invalidCredentials": "Invalid email or password"
+        },
+        "recipes": {
+            "invalidAmount": "Invalid amount",
+            "nameRequired": "Name is required",
+            "addOneIngredient": "Add at least one ingredient before saving.",
+            "couldNotRename": "Could not rename",
+            "couldNotSaveAmount": "Could not save amount"
+        },
+        "reviews": {
+            "notAvailable": "Recipe is not available for reviews.",
+            "ownRecipe": "You can't review your own recipe."
+        },
+        "ingredients": {
+            "loginRequired": "You must be logged in to add ingredients.",
+            "duplicateBarcode": "This barcode is already registered."
+        }
+    },
+    "validation": {
+        "required": "This field is required",
+        "invalidType": "Invalid value",
+        "tooShort": "Must be at least {min} characters",
+        "tooLong": "Must be at most {max} characters",
+        "numberTooSmall": "Must be at least {min}",
+        "numberTooBig": "Must be at most {max}",
+        "invalidEmail": "Invalid email address",
+        "invalidUuid": "Invalid identifier",
+        "invalidEnum": "Invalid choice",
+        "mustBeNonNegative": "Must be a non-negative number",
+        "barcodeRequired": "Barcode is required",
+        "nameRequired": "Name is required"
+    }
+}

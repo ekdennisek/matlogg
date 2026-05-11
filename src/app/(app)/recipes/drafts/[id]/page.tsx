@@ -1,8 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import sql from "sql-template-tag";
 import { z } from "zod";
-import { Card, Page, PageHeader, Stack } from "@/components/Layout";
-import { Body, Caption, H3 } from "@/components/Typography";
+import { getTranslations } from "next-intl/server";
+import { Page, PageHeader } from "@/components/Layout";
 import { many, oneOrNone } from "@/lib/db/queries";
 import { RecipeRow } from "@/lib/db/schemas";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -25,6 +25,7 @@ export default async function DraftEditorPage({ params }: Props) {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
+    const t = await getTranslations("recipes.draft");
     const { id } = await params;
 
     const recipe = await oneOrNone(
@@ -53,7 +54,7 @@ export default async function DraftEditorPage({ params }: Props) {
 
     return (
         <Page>
-            <PageHeader title="Draft" />
+            <PageHeader title={t("pageTitle")} />
             <DraftEditor
                 recipeId={recipe.recipeId}
                 initialName={recipe.name}

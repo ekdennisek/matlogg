@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useSnackbar } from "@/components/Snackbar";
 import { createBarcodeReader } from "@/lib/barcode";
 import { lookupByBarcode } from "@/server/ingredients";
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function ScannerView({ into }: Props) {
+    const t = useTranslations("scan");
     const videoRef = useRef<HTMLVideoElement>(null);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
@@ -38,7 +40,7 @@ export function ScannerView({ into }: Props) {
                 });
             } catch (err) {
                 console.error(err);
-                setError("Could not access the camera. Check browser permissions.");
+                setError(t("cameraError"));
             }
         })();
 
@@ -78,10 +80,10 @@ export function ScannerView({ into }: Props) {
             ? `/ingredients/new?barcode=${encodeURIComponent(code)}&return=${encodeURIComponent(`/recipes/drafts/${draftId}`)}`
             : `/ingredients/new?barcode=${encodeURIComponent(code)}`;
 
-        snackbar.show("This barcode isn't in the database yet.", {
+        snackbar.show(t("unknownBarcode"), {
             durationMs: SNACK_DURATION_MS,
             action: {
-                label: "Add it",
+                label: t("addIt"),
                 onClick: () => router.push(newIngredientPath),
             },
         });
@@ -91,7 +93,7 @@ export function ScannerView({ into }: Props) {
         <div className={styles.scanner}>
             <video ref={videoRef} className={styles.video} playsInline muted autoPlay />
             <div className={styles.frame} />
-            <div className={styles.hint}>Align the barcode inside the frame</div>
+            <div className={styles.hint}>{t("hint")}</div>
             {error && <div className={styles.error}>{error}</div>}
         </div>
     );

@@ -1,0 +1,261 @@
+{
+    "common": {
+        "save": "Spara",
+        "saving": "Sparar…",
+        "cancel": "Avbryt",
+        "delete": "Ta bort",
+        "deleting": "Tar bort…",
+        "loading": "Laddar…",
+        "publicLabel": "Offentligt",
+        "privateLabel": "Privat",
+        "updated": "Uppdaterat",
+        "by": "av"
+    },
+    "metadata": {
+        "title": "Matlogg",
+        "description": "Skanna, bygg och dela recept från din telefon"
+    },
+    "nav": {
+        "home": "Hem",
+        "scan": "Skanna",
+        "recipes": "Recept",
+        "collections": "Samlingar",
+        "account": "Konto"
+    },
+    "welcome": {
+        "title": "Matlogg",
+        "body": "Det här är en app endast för smartphone — för att skanna streckkoder, bygga recept och dela dem. Öppna den på din telefon för att komma igång."
+    },
+    "auth": {
+        "login": {
+            "title": "Välkommen tillbaka",
+            "subtitle": "Logga in för att skapa recept och recensioner.",
+            "emailLabel": "E-post",
+            "passwordLabel": "Lösenord",
+            "submit": "Logga in",
+            "submitting": "Loggar in…",
+            "newHere": "Ny här?",
+            "createAccountLink": "Skapa ett konto"
+        },
+        "register": {
+            "title": "Skapa konto",
+            "subtitle": "Skapa ditt konto för att bygga och dela recept.",
+            "displayNameLabel": "Visningsnamn",
+            "emailLabel": "E-post",
+            "passwordLabel": "Lösenord",
+            "submit": "Skapa konto",
+            "submitting": "Skapar konto…",
+            "haveAccount": "Har du redan ett konto?",
+            "loginLink": "Logga in"
+        }
+    },
+    "home": {
+        "title": "Matlogg",
+        "scan": {
+            "title": "Skanna en streckkod",
+            "body": "Rikta kameran mot en produkt för att slå upp dess näringsvärden.",
+            "cta": "Öppna skanner"
+        },
+        "myRecipes": {
+            "title": "Mina recept och utkast",
+            "body": "Fortsätt arbeta på ett utkast eller visa dina sparade recept."
+        },
+        "browse": {
+            "title": "Bläddra bland offentliga recept",
+            "body": "Hitta recept som andra användare har delat."
+        },
+        "collections": {
+            "title": "Samlingar",
+            "body": "Gruppera recept i egna listor."
+        },
+        "guest": {
+            "title": "Logga in för att göra mer",
+            "body": "Skapa recept, lämna recensioner och spara samlingar.",
+            "login": "Logga in",
+            "register": "Skapa konto"
+        }
+    },
+    "recipes": {
+        "list": {
+            "title": "Mina recept",
+            "newRecipe": "Nytt recept",
+            "browseLink": "Bläddra bland offentliga recept",
+            "draftsHeading": "Utkast",
+            "lastEdited": "Senast redigerad {date}",
+            "savedHeading": "Sparade",
+            "emptySaved": "Du har inte sparat några recept ännu. Tryck på \"Nytt recept\" för att börja.",
+            "savedMeta": "{visibility} · Uppdaterat {date}"
+        },
+        "browse": {
+            "title": "Bläddra bland offentliga recept",
+            "searchPlaceholder": "Sök efter namn",
+            "sortRecent": "Senaste",
+            "sortRating": "Högst betyg",
+            "search": "Sök",
+            "noResults": "Inga recept matchar din sökning än.",
+            "authorAndDate": "av {author} · {date}"
+        },
+        "detail": {
+            "authorLine": "av {author} · {visibility} · Uppdaterat {date}",
+            "reviewsSummary": "{rating} · {count, plural, one {# recension} other {# recensioner}}",
+            "ingredientsHeading": "Ingredienser",
+            "noIngredients": "Inga ingredienser",
+            "totalNutrientsHeading": "Totala näringsvärden",
+            "totalNutrientsCaption": "Beräknat från ingredienser med en grammängd.",
+            "reviewsHeading": "Recensioner"
+        },
+        "draft": {
+            "pageTitle": "Utkast",
+            "nameAriaLabel": "Utkastnamn",
+            "emptyIngredients": "Inga ingredienser ännu. Tryck på \"Skanna och lägg till\" nedan.",
+            "ingredientsHeading": "Ingredienser",
+            "gramsAriaLabel": "Gram för {ingredient}",
+            "removeAriaLabel": "Ta bort {ingredient}",
+            "scanToAdd": "Skanna och lägg till",
+            "saveRecipe": "Spara recept",
+            "dialogTitle": "Spara recept",
+            "nameLabel": "Receptnamn",
+            "publicCheckbox": "Gör offentligt — vem som helst kan hitta och recensera receptet"
+        },
+        "owner": {
+            "deleteButton": "Ta bort",
+            "deleteDialogTitle": "Ta bort recept?",
+            "deleteDialogBody": "Det här tar bort receptet och alla recensioner permanent.",
+            "deleteConfirm": "Ta bort recept"
+        },
+        "review": {
+            "yourReview": "Din recension",
+            "leaveReview": "Lämna en recension",
+            "commentPlaceholder": "Frivillig kommentar",
+            "updateReview": "Uppdatera recension",
+            "submitReview": "Skicka recension"
+        },
+        "addToCollection": {
+            "button": "Lägg till i samling",
+            "dialogTitle": "Lägg till i samling",
+            "noCollections": "Du har inga samlingar ännu.",
+            "createLabel": "Eller skapa en ny samling",
+            "createPlaceholder": "Samlingens namn",
+            "createAndAdd": "Skapa och lägg till",
+            "added": "Tillagt i samling",
+            "addedToNew": "Tillagt i ny samling",
+            "createError": "Kunde inte skapa samling"
+        }
+    },
+    "collections": {
+        "list": {
+            "title": "Samlingar",
+            "empty": "Du har inte skapat några samlingar ännu.",
+            "recipeCount": "{count, plural, one {# recept} other {# recept}}"
+        },
+        "new": {
+            "label": "Ny samling",
+            "placeholder": "t.ex. Vardagsmiddagar",
+            "submit": "Lägg till"
+        },
+        "detail": {
+            "empty": "Den här samlingen är tom. Lägg till recept från en receptsida.",
+            "removeAriaLabel": "Ta bort från samling"
+        },
+        "actions": {
+            "rename": "Byt namn",
+            "deleteButton": "Ta bort",
+            "renameDialogTitle": "Byt namn på samling",
+            "nameLabel": "Namn",
+            "deleteDialogTitle": "Ta bort samling?",
+            "deleteDialogBody": "Recepten inuti tas inte bort, bara själva samlingen.",
+            "deleteConfirm": "Ta bort samling"
+        }
+    },
+    "ingredients": {
+        "new": {
+            "title": "Lägg till ingrediens",
+            "noBarcodeBody": "Ingredienser skapas från en skanning. Öppna skannern och skanna en streckkod som ännu inte finns i databasen.",
+            "intro": "Fyll i produktnamnet och de näringsvärden du kan hitta på etiketten. Alla näringsfält är frivilliga.",
+            "barcodeLabel": "Streckkod",
+            "nameLabel": "Produktnamn",
+            "namePlaceholder": "t.ex. Standardmjölk",
+            "nutrientsHeading": "Näringsvärden per 100 g",
+            "nutrientsCaption": "Alla fält är frivilliga — fyll bara i det du vet.",
+            "submit": "Spara ingrediens",
+            "submitting": "Sparar…",
+            "nutrientLabel": "{label}{suffix}"
+        },
+        "detail": {
+            "barcodeLine": "Streckkod: {barcode}",
+            "per100g": "Per 100 g"
+        }
+    },
+    "scan": {
+        "hint": "Rikta streckkoden inom ramen",
+        "cameraError": "Kunde inte komma åt kameran. Kontrollera webbläsarens behörigheter.",
+        "unknownBarcode": "Den här streckkoden finns inte i databasen ännu.",
+        "addIt": "Lägg till"
+    },
+    "account": {
+        "title": "Konto",
+        "activeSessions": "Aktiva sessioner",
+        "noOtherSessions": "Inga andra aktiva sessioner.",
+        "unknownDevice": "Okänd enhet",
+        "createdLine": "Skapad {created}",
+        "lastUsedLine": " · senast använd {lastUsed}",
+        "signOut": "Logga ut",
+        "signOutEverywhere": "Logga ut överallt",
+        "logOut": "Logga ut",
+        "languageLabel": "Språk",
+        "languageSv": "Svenska",
+        "languageEn": "English"
+    },
+    "nutrients": {
+        "energyKcal": "Energi",
+        "energyKj": "Energi",
+        "fatG": "Fett",
+        "saturatedFatG": "varav mättat",
+        "carbsG": "Kolhydrater",
+        "sugarsG": "varav sockerarter",
+        "fiberG": "Fiber",
+        "proteinG": "Protein",
+        "saltG": "Salt"
+    },
+    "starRating": {
+        "ariaLabel": "{n, plural, one {# stjärna} other {# stjärnor}}"
+    },
+    "draft": {
+        "defaultName": "Utkast – {date}"
+    },
+    "errors": {
+        "auth": {
+            "emailExists": "E-postadressen är redan registrerad",
+            "invalidCredentials": "Felaktig e-post eller lösenord"
+        },
+        "recipes": {
+            "invalidAmount": "Ogiltig mängd",
+            "nameRequired": "Namn krävs",
+            "addOneIngredient": "Lägg till minst en ingrediens innan du sparar.",
+            "couldNotRename": "Kunde inte byta namn",
+            "couldNotSaveAmount": "Kunde inte spara mängden"
+        },
+        "reviews": {
+            "notAvailable": "Receptet är inte tillgängligt för recensioner.",
+            "ownRecipe": "Du kan inte recensera ditt eget recept."
+        },
+        "ingredients": {
+            "loginRequired": "Du måste vara inloggad för att lägga till ingredienser.",
+            "duplicateBarcode": "Den här streckkoden är redan registrerad."
+        }
+    },
+    "validation": {
+        "required": "Det här fältet är obligatoriskt",
+        "invalidType": "Ogiltigt värde",
+        "tooShort": "Måste vara minst {min} tecken",
+        "tooLong": "Får vara högst {max} tecken",
+        "numberTooSmall": "Måste vara minst {min}",
+        "numberTooBig": "Får vara högst {max}",
+        "invalidEmail": "Ogiltig e-postadress",
+        "invalidUuid": "Ogiltig identifierare",
+        "invalidEnum": "Ogiltigt val",
+        "mustBeNonNegative": "Måste vara ett icke-negativt tal",
+        "barcodeRequired": "Streckkod krävs",
+        "nameRequired": "Namn krävs"
+    }
+}

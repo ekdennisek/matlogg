@@ -14,33 +14,34 @@ export function parseLocaleNumber(value: unknown): number | null {
     return Number.isFinite(n) ? n : NaN;
 }
 
-export function formatDate(value: Date): string {
-    return value.toLocaleDateString("en", { year: "numeric", month: "short", day: "numeric" });
+export function formatDate(value: Date, locale: string): string {
+    return value.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
 }
 
+export type NutrientKey =
+    | "energyKcal"
+    | "energyKj"
+    | "fatG"
+    | "saturatedFatG"
+    | "carbsG"
+    | "sugarsG"
+    | "proteinG"
+    | "saltG"
+    | "fiberG";
+
 export type NutrientField = {
-    key:
-        | "energyKcal"
-        | "energyKj"
-        | "fatG"
-        | "saturatedFatG"
-        | "carbsG"
-        | "sugarsG"
-        | "proteinG"
-        | "saltG"
-        | "fiberG";
-    label: string;
+    key: NutrientKey;
     suffix: string;
 };
 
 export const NUTRIENT_FIELDS: NutrientField[] = [
-    { key: "energyKcal", label: "Energy", suffix: " kcal" },
-    { key: "energyKj", label: "Energy", suffix: " kJ" },
-    { key: "fatG", label: "Fat", suffix: " g" },
-    { key: "saturatedFatG", label: "of which saturated", suffix: " g" },
-    { key: "carbsG", label: "Carbohydrates", suffix: " g" },
-    { key: "sugarsG", label: "of which sugars", suffix: " g" },
-    { key: "fiberG", label: "Fiber", suffix: " g" },
-    { key: "proteinG", label: "Protein", suffix: " g" },
-    { key: "saltG", label: "Salt", suffix: " g" },
+    { key: "energyKcal", suffix: " kcal" },
+    { key: "energyKj", suffix: " kJ" },
+    { key: "fatG", suffix: " g" },
+    { key: "saturatedFatG", suffix: " g" },
+    { key: "carbsG", suffix: " g" },
+    { key: "sugarsG", suffix: " g" },
+    { key: "fiberG", suffix: " g" },
+    { key: "proteinG", suffix: " g" },
+    { key: "saltG", suffix: " g" },
 ];

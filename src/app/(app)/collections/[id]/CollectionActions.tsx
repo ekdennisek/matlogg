@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Dialog } from "@/components/Dialog";
@@ -20,6 +21,8 @@ type Props = {
 };
 
 export function CollectionActions({ collectionId, initialName }: Props) {
+    const t = useTranslations("collections.actions");
+    const tCommon = useTranslations("common");
     const [renameOpen, setRenameOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [state, formAction, pending] = useActionState(renameCollection, initial);
@@ -34,18 +37,18 @@ export function CollectionActions({ collectionId, initialName }: Props) {
     return (
         <Row gap={2}>
             <Button variant="secondary" onClick={() => setRenameOpen(true)}>
-                Rename
+                {t("rename")}
             </Button>
             <Button variant="danger" onClick={() => setDeleteOpen(true)}>
-                Delete
+                {t("deleteButton")}
             </Button>
 
-            <Dialog open={renameOpen} onClose={() => setRenameOpen(false)} title="Rename collection">
+            <Dialog open={renameOpen} onClose={() => setRenameOpen(false)} title={t("renameDialogTitle")}>
                 <form action={formAction}>
                     <input type="hidden" name="collectionId" value={collectionId} />
                     <Stack gap={3}>
                         <Input
-                            label="Name"
+                            label={t("nameLabel")}
                             name="name"
                             defaultValue={initialName}
                             required
@@ -53,7 +56,7 @@ export function CollectionActions({ collectionId, initialName }: Props) {
                         />
                         <Stack gap={2}>
                             <Button type="submit" fullWidth disabled={pending}>
-                                {pending ? "Saving…" : "Save"}
+                                {pending ? tCommon("saving") : tCommon("save")}
                             </Button>
                             <Button
                                 type="button"
@@ -61,16 +64,16 @@ export function CollectionActions({ collectionId, initialName }: Props) {
                                 fullWidth
                                 onClick={() => setRenameOpen(false)}
                             >
-                                Cancel
+                                {tCommon("cancel")}
                             </Button>
                         </Stack>
                     </Stack>
                 </form>
             </Dialog>
 
-            <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} title="Delete collection?">
+            <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} title={t("deleteDialogTitle")}>
                 <Stack gap={3}>
-                    <Body>The recipes inside won't be deleted, just the collection itself.</Body>
+                    <Body>{t("deleteDialogBody")}</Body>
                     <Stack gap={2}>
                         <Button
                             variant="danger"
@@ -78,14 +81,14 @@ export function CollectionActions({ collectionId, initialName }: Props) {
                             onClick={handleDelete}
                             disabled={deletePending}
                         >
-                            {deletePending ? "Deleting…" : "Delete collection"}
+                            {deletePending ? tCommon("deleting") : t("deleteConfirm")}
                         </Button>
                         <Button
                             variant="secondary"
                             fullWidth
                             onClick={() => setDeleteOpen(false)}
                         >
-                            Cancel
+                            {tCommon("cancel")}
                         </Button>
                     </Stack>
                 </Stack>

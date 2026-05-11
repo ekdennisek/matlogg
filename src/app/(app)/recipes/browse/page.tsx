@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Card, CardLink, Page, PageHeader, Row, Stack } from "@/components/Layout";
@@ -11,6 +11,8 @@ type Props = {
 };
 
 export default async function BrowsePage({ searchParams }: Props) {
+    const t = await getTranslations("recipes.browse");
+    const locale = await getLocale();
     const params = await searchParams;
     const q = params.q ?? "";
     const sort = params.sort === "rating" ? "rating" : "recent";
@@ -18,11 +20,11 @@ export default async function BrowsePage({ searchParams }: Props) {
 
     return (
         <Page>
-            <PageHeader title="Browse public recipes" />
+            <PageHeader title={t("title")} />
 
             <form>
                 <Stack gap={3}>
-                    <Input name="q" placeholder="Search by name" defaultValue={q} />
+                    <Input name="q" placeholder={t("searchPlaceholder")} defaultValue={q} />
                     <Row gap={2}>
                         <select
                             name="sort"
@@ -35,17 +37,17 @@ export default async function BrowsePage({ searchParams }: Props) {
                                 minHeight: 44,
                             }}
                         >
-                            <option value="recent">Most recent</option>
-                            <option value="rating">Highest rated</option>
+                            <option value="recent">{t("sortRecent")}</option>
+                            <option value="rating">{t("sortRating")}</option>
                         </select>
-                        <Button type="submit">Search</Button>
+                        <Button type="submit">{t("search")}</Button>
                     </Row>
                 </Stack>
             </form>
 
             {recipes.length === 0 ? (
                 <Card>
-                    <Body muted>No recipes match your search yet.</Body>
+                    <Body muted>{t("noResults")}</Body>
                 </Card>
             ) : (
                 <Stack gap={2}>
@@ -53,7 +55,10 @@ export default async function BrowsePage({ searchParams }: Props) {
                         <CardLink key={r.recipeId} href={`/recipes/${r.recipeId}`}>
                             <H3>{r.name}</H3>
                             <Caption>
-                                by {r.authorName} · {formatDate(r.updatedAt)}
+                                {t("authorAndDate", {
+                                    author: r.authorName,
+                                    date: formatDate(r.updatedAt, locale),
+                                })}
                                 {r.reviewCount > 0 &&
                                     ` · ★ ${r.avgRating.toFixed(1)} (${r.reviewCount})`}
                             </Caption>

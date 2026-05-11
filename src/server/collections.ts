@@ -4,13 +4,11 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import sql from "sql-template-tag";
 import { z } from "zod";
+import { getTranslations } from "next-intl/server";
 import { many, none, one, oneOrNone } from "@/lib/db/queries";
 import { CollectionRow } from "@/lib/db/schemas";
 import { requireUser } from "@/lib/auth/session";
-
-const CreateSchema = z.object({
-    name: z.string().trim().min(1).max(120),
-});
+import { buildZodErrorMap } from "@/i18n/zodErrors";
 
 export type CollectionFormState = {
     ok: boolean;
@@ -23,7 +21,16 @@ export async function createCollection(
     fd: FormData,
 ): Promise<CollectionFormState> {
     const user = await requireUser();
-    const parsed = CreateSchema.safeParse({ name: fd.get("name") });
+    const tValidation = await getTranslations("validation");
+
+    const CreateSchema = z.object({
+        name: z.string().trim().min(1).max(120),
+    });
+
+    const parsed = CreateSchema.safeParse(
+        { name: fd.get("name") },
+        { errorMap: buildZodErrorMap(tValidation) },
+    );
     if (!parsed.success) return { ok: false, fieldErrors: parsed.error.flatten().fieldErrors };
     await one(
         sql`
@@ -37,20 +44,25 @@ export async function createCollection(
     return { ok: true };
 }
 
-const RenameSchema = z.object({
-    collectionId: z.string().uuid(),
-    name: z.string().trim().min(1).max(120),
-});
-
 export async function renameCollection(
     _: CollectionFormState,
     fd: FormData,
 ): Promise<CollectionFormState> {
     const user = await requireUser();
-    const parsed = RenameSchema.safeParse({
-        collectionId: fd.get("collectionId"),
-        name: fd.get("name"),
+    const tValidation = await getTranslations("validation");
+
+    const RenameSchema = z.object({
+        collectionId: z.string().uuid(),
+        name: z.string().trim().min(1).max(120),
     });
+
+    const parsed = RenameSchema.safeParse(
+        {
+            collectionId: fd.get("collectionId"),
+            name: fd.get("name"),
+        },
+        { errorMap: buildZodErrorMap(tValidation) },
+    );
     if (!parsed.success) return { ok: false, fieldErrors: parsed.error.flatten().fieldErrors };
 
     await none(sql`

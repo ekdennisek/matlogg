@@ -46,7 +46,7 @@ jobs:
           IMAGE_NAME: ${{ github.event.repository.name }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          sed -i "s|image: $REGISTRY/$IMAGE_NAME:.*|image: $REGISTRY/$IMAGE_NAME:$IMAGE_TAG|" k8s/pokeshop/pokeshop.yaml
+          sed -i "s|image: $REGISTRY/$IMAGE_NAME:.*|image: $REGISTRY/$IMAGE_NAME:$IMAGE_TAG|" k8s/matlogg/matlogg.yaml
 
       - name: Commit and push
         env:
@@ -58,5 +58,5 @@ jobs:
             echo "Image tag already up to date, nothing to commit"
             exit 0
           fi
-          git commit -am "Deploy pokeshop $IMAGE_TAG"
+          git commit -am "Deploy matlogg $IMAGE_TAG"
           git push

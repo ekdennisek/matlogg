@@ -14,13 +14,18 @@ COPY . .
 RUN npm run build
 
 # Production server
-FROM base AS runner
+FROM node:24-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/migrations ./migrations
 
+RUN groupadd --system --gid 1001 nodejs \
+    && useradd --system --uid 1001 --gid nodejs nextjs
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+USER nextjs
 EXPOSE 3000
 ENV HOSTNAME="0.0.0.0"
 ENV INTERNAL_URL="http://localhost:3000"
